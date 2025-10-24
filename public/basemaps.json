@@ -1,0 +1,32 @@
+{
+  "defaultId": "gsi-standard",
+  "basemaps": [
+    {
+      "id": "gsi-standard",
+      "name": "GSI 標準地図",
+      "type": "raster",
+      "url": "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+      "attribution": "地理院タイル"
+    },
+    {
+      "id": "gsi-pale",
+      "name": "GSI 淡色",
+      "type": "raster",
+      "url": "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
+      "attribution": "地理院タイル"
+    },
+    {
+      "id": "osm",
+      "name": "OpenStreetMap",
+      "type": "raster",
+      "url": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "attribution": "© OpenStreetMap contributors"
+    },
+    {
+      "id": "ml-demo-style",
+      "name": "MapLibre Demo Vector",
+      "type": "style",
+      "styleUrl": "https://demotiles.maplibre.org/style.json"
+    }
+  ]
+}
