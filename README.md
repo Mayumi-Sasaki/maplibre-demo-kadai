@@ -1,46 +1,40 @@
-# Getting Started with Create React App
+# アプリ概要
+React + TypeScript + MapLibre GL JS を用いた、背景地図の切り替えを行える、WEBアプリケーション。
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 起動方法
+1. 依存関係のインストール(package.jsonにmaplibre-gl記載済です)
+npm install
+2. ベースマップ設定ファイルの配置
+public/basemaps.jsonの配置確認
+3. MapLibreのコントロール（ズームボタンなど）のスタイル読み込み確認
+import "maplibre-gl/dist/maplibre-gl.css";の記載確認
+4. アプリケーションのビルドと起動
+``bash``
+`npm start` 
+5. アプリケーションの確認
+ブラウザで http://localhost:3000 や http://localhost:5173 などにアクセスすると、アプリケーションが起動します。
+- 全画面で地図が表示されるか。
+- 画面右上にベースマップ切り替え用のセレクトボックスが表示されているか。
+- セレクトボックスで地図を切り替えたときに、地図の内容が変更されるか。
+これらが確認できれば、アプリケーションは正常にビルド・起動しています。
 
-## Available Scripts
+# 使用技術
+1. MapLibre GL JS: 地図の描画
+2. React / TypeScript: アプリケーション構築と言語
 
-In the project directory, you can run:
+# 工夫した点
+1. Mapインスタンスのライフサイクル管理
+MapLibreはDOMを直接操作するため、Reactの管理外になりやすいため、
+MapLibreのMapインスタンスをReactの useRef で保持し、
+コンポーネントのマウント時（生成）とアンマウント時（破棄）に 
+map.remove() を実行することで、DOM要素とメモリリークの発生を防止しました。
 
-### `npm start`
+2. 動的なベースマップ切り替えロジック
+外部の basemaps.json ファイルから非同期で地図タイル情報を取得し、
+ユーザーがセレクトボックスを操作する際、MapLibreのmap.setStyle() メソッドを 
+使って地図を再描画せずにスタイルを更新するよう、実装しました。
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+3. MapView.tsxへの描画実装の集中
+描画やMapLibre GL JSの初期化など、地図に関するすべてのロジックを MapView.tsx コンポーネントに集中させました。
+これにより、アプリケーションの他の部分から地図実装を分離し、保守性と見通しを向上させています。
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).

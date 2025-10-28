@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import maplibregl, { StyleSpecification } from "maplibre-gl"; // ★ StyleSpecification をインポート
-import "maplibre-gl/dist/maplibre-gl.css";
+import "maplibre-gl/dist/maplibre-gl.css"; //地図のスタイル（コントロールなど）を正しく表示するためのCSS
 
 // styleUrlを持つ項目もあるため、型を柔軟に定義
 type Basemap = {
@@ -16,7 +16,7 @@ type Basemap = {
 type MapState = {
     id: string;
     // MapLibreのスタイルは string (URL) または StyleSpecification オブジェクト
-    style: string | StyleSpecification; // ★ 型を StyleSpecification に変更
+    style: string | StyleSpecification; // 型を StyleSpecification に変更
     attribution?: string;
 }
 
@@ -24,21 +24,27 @@ const MapView: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<maplibregl.Map | null>(null);
   const [basemaps, setBasemaps] = useState<Record<string, Basemap>>({});
-  // currentMapStateをオブジェクトにし、styleだけでなくidやattributionも保持
+  // currentMapStateオブジェクトに現在のベースマップの全情報を保持
   const [currentMapState, setCurrentMapState] = useState<MapState | null>(null);
 
   // ----------------------------------------------------
   // 1. basemaps.jsonを読み込み、初期のスタイルを設定
   // ----------------------------------------------------
   useEffect(() => {
-    fetch("/basemaps.json")
+    fetch("/basemaps.json") // アプリのルートパスから直接アクセスできる
       .then((res) => {
+        // 念のため、レスポンスがOK（200番台）か確認する
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
         return res.json();
       })
-      .then((data) => {const basemapsArray: Basemap[] = data.basemaps;
+      //basemaps.jsonのbasemaps配列を取得
+      .then((data) => {
+        const basemapsArray: Basemap[] = data.basemaps;
+        // idに対応するbasemapsObject全て取得。特定のIDのベースマップ情報を取得したい場合、basemaps["osm"]で取得可能になる。
+        // acc(最初は空。処理中に構築されるオブジェクト), bm(個別のbasemapsArrayオブジェクト)
+        // basemapObject完成形{ "gsi-standard": { "id": "gsi-standard", "name": "GSI 標準地図", ... },  "osm": { "id": "osm", "name": "OpenStreetMap", ... }}
         const basemapsObject: Record<string, Basemap> = basemapsArray.reduce(
             (acc, bm) => {
                 acc[bm.id] = bm;
@@ -59,7 +65,7 @@ const MapView: React.FC = () => {
   }, []);
   
   // ----------------------------------------------------
-  // 2. Mapのスタイルを切り替えるロジック
+  // 2. Mapのスタイルを切り替える関数
   // ----------------------------------------------------
   const handleChangeBasemap = (selectedBasemap: Basemap) => {
     // string (URL) または StyleSpecification の型で初期化
@@ -129,7 +135,7 @@ const MapView: React.FC = () => {
     });
 
     // コントロールの追加
-    map.addControl(new maplibregl.NavigationControl(), "top-right");
+    map.addControl(new maplibregl.NavigationControl(), "top-left");
 
     // Mapインスタンスをrefに保存
     mapInstance.current = map;
@@ -156,10 +162,11 @@ const MapView: React.FC = () => {
           borderRadius: '4px'
       }}>
         <select 
+            id="select-demo"
             onChange={handleChange} 
             value={currentMapState?.id || ""}
         >
-          {Object.values(basemaps).map((bm) => (
+          {Object.values(basemaps).map((bm) => ( // mapメソッドでbasemapのidをkey,valueに入れ、nameをselect要素に表示
             <option key={bm.id} value={bm.id}>
               {bm.name}
             </option>
@@ -170,21 +177,25 @@ const MapView: React.FC = () => {
       {/* Mapコンテナ */}
       <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
 
-      {/* 著作権表示（オプション） */}
-      {/* MapLibreのAttributionControlを使うのが一般的ですが、セレクトで切り替える場合は自前で表示するのも有効です */}
-      {/* <div style={{ 
-          position: "absolute", 
-          bottom: 10, 
-          right: 10, 
-          zIndex: 10, 
-          fontSize: '0.8em',
-          color: '#333',
-          backgroundColor: 'rgba(255, 255, 255, 0.7)',
-          padding: '2px 5px',
-          borderRadius: '3px'
-      }}>
-        {currentMapState?.attribution}
-      </div> */}
+      {/* 著作権表示（MapLibreのAttributionControlを無効化している場合に使用） */}
+      {currentMapState?.attribution && (
+          <div 
+              style={{ 
+                  position: "absolute", 
+                  bottom: 10, 
+                  right: 10, 
+                  zIndex: 10, 
+                  fontSize: '0.8em',
+                  color: '#333',
+                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                  padding: '2px 5px',
+                  borderRadius: '3px',
+                  maxWidth: 'calc(100% - 20px)' // 横幅がはみ出さないように
+              }}
+              // ★★★ HTML文字列をそのまま描画する ★★★
+              dangerouslySetInnerHTML={{ __html: currentMapState.attribution }}
+          />
+      )}
     </div>
   );
 };

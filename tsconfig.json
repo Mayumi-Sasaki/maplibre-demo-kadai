@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
+    "target": "es5",  //出力されるJavaScriptのバージョン
+    "lib": [          //利用するAPI群。DOM操作やESNext構文を使う設定
       "dom",
       "dom.iterable",
       "esnext"
@@ -10,15 +10,15 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
+    "strict": true,                               //TypeScriptの厳格チェックを有効化（バグ防止）
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
+    "resolveJsonModule": true,                    //JSONファイルを import basemaps from "../public/basemaps.json" のように読み込めるようにする
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "noEmit": true,                               //実際にはコンパイル結果を出力せず、Viteが内部で処理する
+    "jsx": "react-jsx"                            //React 17+ の新しいJSXトランスフォームに対応
   },
   "include": [
     "src"
