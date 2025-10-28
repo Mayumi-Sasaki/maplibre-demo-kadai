@@ -31,7 +31,10 @@ const MapView: React.FC = () => {
   // 1. basemaps.jsonを読み込み、初期のスタイルを設定
   // ----------------------------------------------------
   useEffect(() => {
-    fetch("/basemaps.json") // アプリのルートパスから直接アクセスできる
+    // process.env.PUBLIC_URL は、CRA環境で / を返すため、パスが確実にルートから始まる
+    const basemapsUrl = `${process.env.PUBLIC_URL}/basemaps.json`;
+
+    fetch(basemapsUrl)
       .then((res) => {
         // 念のため、レスポンスがOK（200番台）か確認する
         if (!res.ok) {
