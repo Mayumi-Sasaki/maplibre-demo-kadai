@@ -1,3 +1,6 @@
+# 最終成果物（動作デモ）
+こちらのURLからアプリケーションを確認できます: [公開URL] (https://mayumi-sasaki.github.io/maplibre-demo-kadai/)
+
 # アプリ概要
 React + TypeScript + MapLibre GL JS を用いた、背景地図の切り替えを行える、WEBアプリケーション
 
